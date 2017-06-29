@@ -1,8 +1,6 @@
-import json
-
-from bson import json_util
 from mongoengine import fields, EmbeddedDocument, Document, connect
-from constant import MONGO_URL, MONGO_PORT, TWITTER_COLLECTION
+
+from socials_api.constant import MONGO_URL, MONGO_PORT
 
 connect(db='influencers', host=MONGO_URL, port=MONGO_PORT, username='admin', password='Influstein17')
 
@@ -27,7 +25,8 @@ class MongoSocialInfluencer(Document):
     posts = fields.ListField(type=MongoPost)
     fulltext = fields.StringField()
     histogram = fields.DictField()
-    twentybestswords = fields.ListField()
+    twentywords = fields.ListField()
+    tags = fields.ListField()
 
 
 
