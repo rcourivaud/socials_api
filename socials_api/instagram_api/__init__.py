@@ -12,6 +12,9 @@ import tqdm
 from bson import json_util
 
 from instagram_scraper.constants import *
+from socials_api.meta_extractor import MetaExtractor
+
+from socials_api.instagram_api.instagram_user import InstagramUserHandler
 
 warnings.filterwarnings('ignore')
 
@@ -42,6 +45,9 @@ class InstagramScraper(object):
         self.cookies = None
         self.logged_in = False
         self.last_scraped_filemtime = 0
+
+        self.meta_extractor = MetaExtractor()
+
 
     def login(self):
         """Logs in to instagram."""
@@ -79,10 +85,10 @@ class InstagramScraper(object):
         # Get the user metadata.
         user = self.fetch_user(username)
         self.logger.info("fetch {} user".format(username))
-        return json.dumps(self.extract_data(user), default=json_util.default, ensure_ascii=False)
+        return self.extract_data(user)
 
     def extract_data(self, response):
-        return {
+        result_dict =  {
             "profile_picture": response["profile_pic_url_hd"],
             "username": response["username"],
             "full_name": response["full_name"],
@@ -93,8 +99,17 @@ class InstagramScraper(object):
             "id": response["id"],
             "posts": [self.clean_post(post) for post in response["media"]["nodes"]],
             "time":datetime.datetime.now()
-
         }
+
+        result_dict["fulltext"] = " ".join([elt["text"] for elt in result_dict['posts'] if elt.get("text")]).replace("\n", " ")
+        print(result_dict["fulltext"] )
+        result_dict["status_count"] = len(result_dict["posts"])
+        result_dict["histogram"] = self.meta_extractor.get_histogram_from_string(result_dict["fulltext"])
+        result_dict["twentywords"] = [k for k, v in sorted(result_dict["histogram"].items(),
+                                                           key=lambda x: x[1], reverse=True)][0:20]
+        result_dict["tags"] = self.meta_extractor.get_hashtags_from_string(result_dict["fulltext"])
+        return result_dict
+
 
     def clean_post(self, post):
         """
@@ -157,4 +172,7 @@ class InstagramScraper(object):
 
 if __name__ == "__main__":
     scraper = InstagramScraper()
-    print(scraper.scrap_username("influenzzz"))
+    res = scraper.scrap_username("influenzzz")
+    print(res)
+    user = InstagramUserHandler(res, id_=1)
+    user.save_user()
