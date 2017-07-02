@@ -2,6 +2,7 @@ import json
 
 import requests
 
+from socials_api.constant import APP_ID, APP_SECRET
 from socials_api.facebook_api.facebook_user import FacebookUserHandler
 from socials_api.meta_extractor import MetaExtractor
 
@@ -60,10 +61,8 @@ class FacebookScraper:
         return None
 
 if __name__ == "__main__":
-    app_id = "1569915416392347"
-    app_secret = "ac651e5c51440907720f784b67e82a38"  # DO NOT SHARE WITH ANYONE!
 
-    access_token = app_id + "|" + app_secret
+    access_token = APP_ID + "|" + APP_SECRET
     twa = FacebookScraper(access_token=access_token)
 
     d = twa.get_data_from_username("influenzzz")

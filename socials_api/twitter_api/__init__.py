@@ -1,6 +1,8 @@
 import time
 
 import tweepy
+
+from socials_api.constant import CONSUMER_KEY, CONSUMER_SECRET, ACCESS_TOKEN, ACCESS_TOKEN_SECRET
 from socials_api.meta_extractor import MetaExtractor
 from socials_api.twitter_api.twitter_user import TwitterUserHandler
 
@@ -55,12 +57,8 @@ class TwitterAPI:
         return d
 
 if __name__ =="__main__":
-    consumer_key = "KlPIWgeCoUhrk4xe7VkqQZHmV"
-    consumer_secret = "kr0G5mHe2WTyS844Fclm3ewz09Jt8mXJbdvJUQQDoSQibfTcaM"
-    access_token = "592331421-dG45Iu4twLcbrIELIi2qHC6u8x9levwT8PYhqFfy"
-    access_token_secret = "gDSn3Rs0U4qd8vOkhUasjXjvvP21fWX8cw2Qp1Qo7rsC2"
-    twa = TwitterAPI(consumer_key=consumer_key, consumer_secret=consumer_secret,
-                     access_token=access_token, access_token_secret=access_token_secret)
+    twa = TwitterAPI(consumer_key=CONSUMER_KEY, consumer_secret=CONSUMER_SECRET,
+                     access_token=ACCESS_TOKEN, access_token_secret=ACCESS_TOKEN_SECRET)
 
 
     d = twa.get_data_from_username("influenzzzfr")
