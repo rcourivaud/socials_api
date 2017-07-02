@@ -1,12 +1,12 @@
 from mongoengine import fields, EmbeddedDocument, Document, connect
 
-from socials_api.constant import MONGO_URL, MONGO_PORT
+from socials_api.constant import MONGO_URL, MONGO_PORT, MONGO_USER, MONGO_PWD, MONGO_DB
 
-connect(db='influencers',
+connect(db=MONGO_DB,
         host=MONGO_URL,
         port=MONGO_PORT,
-        username='admin',
-        password='Influstein17')
+        username=MONGO_USER,
+        password=MONGO_PWD)
 
 
 class MongoPost(EmbeddedDocument):
