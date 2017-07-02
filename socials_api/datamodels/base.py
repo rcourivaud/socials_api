@@ -2,7 +2,11 @@ from mongoengine import fields, EmbeddedDocument, Document, connect
 
 from socials_api.constant import MONGO_URL, MONGO_PORT
 
-connect(db='influencers', host=MONGO_URL, port=MONGO_PORT, username='admin', password='Influstein17')
+connect(db='influencers',
+        host=MONGO_URL,
+        port=MONGO_PORT,
+        username='admin',
+        password='Influstein17')
 
 
 class MongoPost(EmbeddedDocument):
@@ -27,7 +31,3 @@ class MongoSocialInfluencer(Document):
     histogram = fields.DictField()
     twentywords = fields.ListField()
     tags = fields.ListField()
-
-
-
-
