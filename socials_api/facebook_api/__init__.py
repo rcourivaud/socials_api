@@ -2,8 +2,6 @@ import json
 
 import requests
 
-from socials_api.constant import APP_ID, APP_SECRET
-from socials_api.facebook_api.facebook_user import FacebookUserHandler
 from socials_api.meta_extractor import MetaExtractor
 
 
@@ -41,13 +39,14 @@ class FacebookScraper:
         user_id = self.get_facebook_page_id_from_name(name=username)
         if user_id:
             data = self.get_facebook_page_data(page_id=user_id)
-            result_dict = {"description": data['about'], "followers": data["fan_count"],
-                           "profile_img": data["picture"]["data"]["url"], "social_id": data["id"],
+            result_dict = {"description": data.get('about'), "followers": data.get("fan_count"),
+                           "profile_img": data["picture"]["data"]["url"] if data.get("picture") else None,
+                           "social_id": data["id"],
                            "posts": [{k: v for k, v in {
                                "id": elt["id"],
                                "text": elt.get("message"),
                                "img": elt.get("link"),
-                               "likes": len(elt["likes"]["data"]),
+                               "likes": len(elt["likes"]["data"]) if elt.get("likes") else 0,
                                "date": elt["created_time"]
                            }.items() if v} for elt in data["posts"]["data"]], "username": username}
 
@@ -57,17 +56,5 @@ class FacebookScraper:
             result_dict["twentywords"] = [k for k, v in sorted(result_dict["histogram"].items(),
                                                                key=lambda x: x[1], reverse=True)][0:20]
             result_dict["tags"] = self.meta_extractor.get_hashtags_from_string(result_dict["fulltext"])
-            return result_dict
+            return {k: v for k, v in result_dict.items() if v}
         return None
-
-if __name__ == "__main__":
-
-    access_token = APP_ID + "|" + APP_SECRET
-    twa = FacebookScraper(access_token=access_token)
-
-    d = twa.get_data_from_username("influenzzz")
-    if d :
-        user = FacebookUserHandler(d, id_=1)
-        user.save_user()
-    else:
-        print("UserNotFound")

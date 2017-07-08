@@ -1,20 +1,13 @@
 import datetime
 import json
 import logging.config
-import os
-import re
-import sys
-import textwrap
-import time
 import warnings
+
 import requests
-import tqdm
-from bson import json_util
-
 from instagram_scraper.constants import *
-from socials_api.meta_extractor import MetaExtractor
-
 from socials_api.instagram_api.instagram_user import InstagramUserHandler
+
+from socials_api.meta_extractor import MetaExtractor
 
 warnings.filterwarnings('ignore')
 
@@ -84,8 +77,11 @@ class InstagramScraper(object):
 
         # Get the user metadata.
         user = self.fetch_user(username)
-        self.logger.info("fetch {} user".format(username))
-        return self.extract_data(user)
+        if user:
+            self.logger.info("fetch {} user".format(username))
+            return self.extract_data(user)
+        else:
+            return None
 
     def extract_data(self, response):
         result_dict =  {
@@ -102,7 +98,6 @@ class InstagramScraper(object):
         }
 
         result_dict["fulltext"] = " ".join([elt["text"] for elt in result_dict['posts'] if elt.get("text")]).replace("\n", " ")
-        print(result_dict["fulltext"] )
         result_dict["status_count"] = len(result_dict["posts"])
         result_dict["histogram"] = self.meta_extractor.get_histogram_from_string(result_dict["fulltext"])
         result_dict["twentywords"] = [k for k, v in sorted(result_dict["histogram"].items(),
@@ -147,7 +142,6 @@ class InstagramScraper(object):
     def fetch_user(self, username):
         """Fetches the user's metadata."""
         resp = self.session.get(BASE_URL + username)
-
         if resp.status_code == 200 and '_sharedData' in resp.text:
             try:
                 shared_data = resp.text.split("window._sharedData = ")[1].split(";</script>")[0]
@@ -169,10 +163,3 @@ class InstagramScraper(object):
 
         logger.addHandler(handler)
         return logger
-
-if __name__ == "__main__":
-    scraper = InstagramScraper()
-    res = scraper.scrap_username("influenzzz")
-    print(res)
-    user = InstagramUserHandler(res, id_=1)
-    user.save_user()
