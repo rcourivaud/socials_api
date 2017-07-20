@@ -41,7 +41,6 @@ class InstagramScraper(object):
 
         self.meta_extractor = MetaExtractor()
 
-
     def login(self):
         """Logs in to instagram."""
         self.session.headers.update({'Referer': BASE_URL})
@@ -84,27 +83,29 @@ class InstagramScraper(object):
             return None
 
     def extract_data(self, response):
-        result_dict =  {
+        result_dict = {
             "profile_picture": response["profile_pic_url_hd"],
             "username": response["username"],
             "full_name": response["full_name"],
             "is_verified": response["is_verified"],
-            "followers": response['followed_by']["count"],
+            "followers": [{"value": response['followed_by']["count"],
+                           "date": datetime.datetime.now()}],
             "website": response['external_url'],
-            "follows": response["follows"]["count"],
+            "follows": [{"value": response["follows"]["count"],
+                         "date": datetime.datetime.now()}],
             "id": response["id"],
             "posts": [self.clean_post(post) for post in response["media"]["nodes"]],
-            "time":datetime.datetime.now()
+            "time": datetime.datetime.now()
         }
 
-        result_dict["fulltext"] = " ".join([elt["text"] for elt in result_dict['posts'] if elt.get("text")]).replace("\n", " ")
+        result_dict["fulltext"] = " ".join([elt["text"] for elt in result_dict['posts'] if elt.get("text")]).replace(
+            "\n", " ")
         result_dict["status_count"] = len(result_dict["posts"])
         result_dict["histogram"] = self.meta_extractor.get_histogram_from_string(result_dict["fulltext"])
         result_dict["twentywords"] = [k for k, v in sorted(result_dict["histogram"].items(),
                                                            key=lambda x: x[1], reverse=True)][0:20]
         result_dict["tags"] = self.meta_extractor.get_hashtags_from_string(result_dict["fulltext"])
         return result_dict
-
 
     def clean_post(self, post):
         """

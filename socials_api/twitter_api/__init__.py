@@ -1,10 +1,10 @@
+import datetime
 import time
 
 import tweepy
-
-from socials_api.constant import CONSUMER_KEY, CONSUMER_SECRET, ACCESS_TOKEN, ACCESS_TOKEN_SECRET
-from socials_api.meta_extractor import MetaExtractor
 from socials_api.twitter_api.twitter_user import TwitterUserHandler
+
+from socials_api.meta_extractor import MetaExtractor
 
 
 class TwitterAPI:
@@ -30,13 +30,16 @@ class TwitterAPI:
         result_dict = {
             "description": twitter_user.description,
             "profile_img": twitter_user.profile_image_url,
-            "followers": twitter_user.followers_count,
+            "followers": [{"value": twitter_user.followers_count,
+                           "date": datetime.datetime.now()}],
             "location": twitter_user.location,
             "social_id": twitter_user.id,
-            "follows": twitter_user.friends_count,
+            "follows": [{"value": twitter_user.friends_count,
+                         "date": datetime.datetime.now()}],
             "created_date": twitter_user.created_at,
             "username": twitter_user.name,
-            "status_count": twitter_user.statuses_count,
+            "status_count": [{"value": twitter_user.statuses_count,
+                              "date": datetime.datetime.now()}],
             "posts": [{
                            "id": elt.id,
                            "text": elt.text,
@@ -56,10 +59,5 @@ class TwitterAPI:
         d = self.get_data(self.get_user_by_name(user_name=username))
         return d
 
-if __name__ =="__main__":
-    twa = TwitterAPI(consumer_key=CONSUMER_KEY, consumer_secret=CONSUMER_SECRET,
-                     access_token=ACCESS_TOKEN, access_token_secret=ACCESS_TOKEN_SECRET)
-
-
-    d = twa.get_data_from_username("influenzzzfr")
-    TwitterUserHandler(d, id_=1)
+    def to_str(self):
+        return None

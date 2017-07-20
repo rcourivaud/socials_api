@@ -1,4 +1,5 @@
 import json
+from datetime import datetime
 
 import requests
 
@@ -39,7 +40,8 @@ class FacebookScraper:
         user_id = self.get_facebook_page_id_from_name(name=username)
         if user_id:
             data = self.get_facebook_page_data(page_id=user_id)
-            result_dict = {"description": data.get('about'), "followers": data.get("fan_count"),
+            result_dict = {"description": data.get('about'), "followers": [{"value": data.get("fan_count"),
+                                                                            "date": datetime.now()}],
                            "profile_img": data["picture"]["data"]["url"] if data.get("picture") else None,
                            "social_id": data["id"],
                            "posts": [{k: v for k, v in {
@@ -50,7 +52,8 @@ class FacebookScraper:
                                "date": elt["created_time"]
                            }.items() if v} for elt in data["posts"]["data"]], "username": username}
 
-            result_dict["fulltext"] = " ".join([elt["text"] for elt in result_dict['posts'] if elt.get("text")]).replace("\n", " ")
+            result_dict["fulltext"] = " ".join(
+                [elt["text"] for elt in result_dict['posts'] if elt.get("text")]).replace("\n", " ")
 
             result_dict["histogram"] = self.meta_extractor.get_histogram_from_string(result_dict["fulltext"])
             result_dict["twentywords"] = [k for k, v in sorted(result_dict["histogram"].items(),
