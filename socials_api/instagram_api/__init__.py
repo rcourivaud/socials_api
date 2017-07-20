@@ -100,7 +100,8 @@ class InstagramScraper(object):
 
         result_dict["fulltext"] = " ".join([elt["text"] for elt in result_dict['posts'] if elt.get("text")]).replace(
             "\n", " ")
-        result_dict["status_count"] = len(result_dict["posts"])
+        result_dict["status_count"] = [{"value": len(result_dict["posts"]),
+                                        "date": datetime.datetime.now()}]
         result_dict["histogram"] = self.meta_extractor.get_histogram_from_string(result_dict["fulltext"])
         result_dict["twentywords"] = [k for k, v in sorted(result_dict["histogram"].items(),
                                                            key=lambda x: x[1], reverse=True)][0:20]
