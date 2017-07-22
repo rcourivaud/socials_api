@@ -1,0 +1,7 @@
+nltk==3.2.1
+tweepy==3.5.0
+requests==2.17.3
+mongoengine==0.13.0
+instagram_scraper==1.4.1
+scikit_learn
+-e git://github.com/rcourivaud/web_extractors.git#egg=web_extractors

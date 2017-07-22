@@ -1,5 +1,10 @@
 from distutils.core import setup
 
+from pip.req import parse_requirements
+
+install_reqs = parse_requirements("requirements.txt")
+reqs = [str(ir.req) for ir in install_reqs]
+
 setup(
     name='socials_api',
     version='0.1',
@@ -10,5 +15,7 @@ setup(
     license='',
     author='Raphaaël Courivaud',
     author_email='r.courivaud@gmail.com',
-    description=''
+    description='',
+    install_requires=reqs
+
 )
