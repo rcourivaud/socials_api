@@ -5,7 +5,6 @@ import warnings
 
 import requests
 from instagram_scraper.constants import *
-from socials_api.instagram_api.instagram_user import InstagramUserHandler
 
 from socials_api.meta_extractor import MetaExtractor
 

@@ -2,7 +2,6 @@ import datetime
 import time
 
 import tweepy
-from socials_api.twitter_api.twitter_user import TwitterUserHandler
 
 from socials_api.meta_extractor import MetaExtractor
 
