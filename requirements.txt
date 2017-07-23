@@ -5,4 +5,5 @@ mongoengine==0.13.0
 instagram_scraper==1.4.1
 scikit_learn
 numpy
+scipy
 -e git://github.com/rcourivaud/web_extractors.git#egg=web_extractors
