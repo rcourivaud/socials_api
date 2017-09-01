@@ -25,6 +25,14 @@ class TwitterAPI:
         except tweepy.RateLimitError:
             return None
 
+    def get_post_by_id(self, post_id):
+        try:
+            return self.api.get_status(post_id)
+        except tweepy.RateLimitError:
+            time.sleep(15 * 60)
+        except tweepy.TweepError as e:
+            return None
+
     def get_data(self, twitter_user):
         result_dict = {
             "description": twitter_user.description,

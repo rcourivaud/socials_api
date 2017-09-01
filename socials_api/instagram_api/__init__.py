@@ -150,6 +150,16 @@ class InstagramScraper(object):
             except (TypeError, KeyError, IndexError):
                 pass
 
+    def get_post(self, post_id):
+        resp = self.session.get(BASE_URL + "p/" + post_id)
+
+        if resp.status_code == 200 and '_sharedData' in resp.text:
+            # try:
+            shared_data = resp.text.split("window._sharedData = ")[1].split(";</script>")[0]
+            return json.loads(shared_data)
+            # except (TypeError, KeyError, IndexError):
+            # pass
+
     @staticmethod
     def get_logger(level=logging.WARNING, log_file='instagram-scraper.log'):
         """Returns a file logger."""

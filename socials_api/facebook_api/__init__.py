@@ -36,6 +36,15 @@ class FacebookScraper:
 
         return data
 
+    def get_facebook_post_data(self, post_id):
+        parameters = "?fields=shares,likes.summary(true),comments.summary(true)&access_token={}".format(
+            self.access_token)
+        url = self.base_url + post_id + parameters
+        # retrieve data
+        data = requests.get(url).json()
+
+        return data
+
     def get_data_from_username(self, username):
         user_id = self.get_facebook_page_id_from_name(name=username)
         if user_id:
